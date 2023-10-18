@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.photogallery"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.photogallery"
@@ -35,9 +35,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+    // add reference：ttps://qiita.com/Nabe1216/items/322caa7acf11dbe032ca
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>()
+        .configureEach {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
     buildFeatures {
         compose = true
     }

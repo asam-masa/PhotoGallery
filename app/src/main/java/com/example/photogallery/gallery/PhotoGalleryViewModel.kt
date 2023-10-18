@@ -38,7 +38,7 @@ data class PhotoGalleryItem(val uri: Uri){
 class PhotoGalleryViewModel(app:Application):AndroidViewModel(app){
     val photoList = MutableLiveData<List<PhotoGalleryItem>>()
     val isPermissionGranted = MutableLiveData<Boolean>().apply { value = false }
-    val isPermissionDinied = MutableLiveData<Boolean>().apply { value = false }
+    val isPermissionDenied = MutableLiveData<Boolean>().apply { value = false }
 
     fun loadPhotoList(){
         viewModelScope.launch(Dispatchers.IO){

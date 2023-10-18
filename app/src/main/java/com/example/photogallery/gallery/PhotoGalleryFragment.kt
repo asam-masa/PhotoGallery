@@ -4,20 +4,26 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.PermissionChecker
 import androidx.core.os.bundleOf
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.example.photogallery.R
+import com.example.photogallery.databinding.FragmentPhotoGalleryBinding
+import com.example.photogallery.databinding.ViewPhotoGalleryImageBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.IllegalStateException
 
@@ -27,6 +33,9 @@ class PhotoGalleryFragment : Fragment() {
     // Avtivityと同じインスタンスを共有する場合はactivityViewModels()を使う
     // https://developer.android.com/kotlin/ktx?hl=ja#fragment
     private val viewModel: PhotoGalleryViewModel by activityViewModels()
+
+    private var _binding:FragmentPhotoGalleryBinding? = null
+    private val binding get() = _binding!!
 
     private val permissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -40,7 +49,7 @@ class PhotoGalleryFragment : Fragment() {
                 showRationaleDialog()
             }else{
                 // 最終確認も拒否
-                viewModel.isPermissionDinied.value = true
+                viewModel.isPermissionDenied.value = true
             }
         }
     }
@@ -58,6 +67,48 @@ class PhotoGalleryFragment : Fragment() {
         }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = DataBindingUtil.inflate(
+            inflater, R.layout.fragment_photo_gallery,container,false
+        )
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val imageAdapter = ImageAdapter()
+
+        viewModel.photoList.observe((viewLifecycleOwner, Observer {
+            imageAdapter.submitList(it)
+        }))
+    }
+
+    inner class ImageAdapter:ListAdapter<PhotoGalleryItem,ImageViewHolder>(PhotoGalleryItem.DIFF_UTIL) {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
+            TODO("Not yet implemented")
+        }
+
+        override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+            TODO("Not yet implemented")
+        }
+
+    }
+
+    inner class ImageViewHolder(val binding: ViewPhotoGalleryImageBinding)
+        :RecyclerView.ViewHolder(binding.root)
+
     override fun onResume() {
         super.onResume()
         if (viewModel.isPermissionGranted.value == true){
@@ -74,7 +125,7 @@ class PhotoGalleryFragment : Fragment() {
             if (it == RationalDialog.RESULT_OK){
                 permissionRequest.launch(REQ_PERMISSION)
             }else{
-                viewModel.isPermissionDinied.value = true
+                viewModel.isPermissionDenied.value = true
             }
         }
     }
