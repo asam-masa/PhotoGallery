@@ -19,11 +19,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photogallery.R
 import com.example.photogallery.databinding.FragmentPhotoGalleryBinding
 import com.example.photogallery.databinding.ViewPhotoGalleryImageBinding
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.IllegalStateException
 
@@ -90,18 +92,38 @@ class PhotoGalleryFragment : Fragment() {
 
         val imageAdapter = ImageAdapter()
 
-        viewModel.photoList.observe((viewLifecycleOwner, Observer {
+        viewModel.photoList.observe(viewLifecycleOwner, Observer {
             imageAdapter.submitList(it)
-        }))
+        })
+        binding.recyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = GridLayoutManager(this@PhotoGalleryFragment.context,SPAN_COUNT)
+            adapter = imageAdapter
+        }
     }
 
     inner class ImageAdapter:ListAdapter<PhotoGalleryItem,ImageViewHolder>(PhotoGalleryItem.DIFF_UTIL) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-            TODO("Not yet implemented")
+            val layoutInflater = LayoutInflater.from(parent.context)
+            val binding = DataBindingUtil.inflate<ViewPhotoGalleryImageBinding>(
+                layoutInflater, R.layout.view_photo_gallery_image, parent, false
+            )
+            return ImageViewHolder(binding)
         }
 
         override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-            TODO("Not yet implemented")
+            val item = viewModel.getPhotoItem(position)
+
+            holder.binding.viewModel = viewModel
+            holder.binding.item = item
+            holder.binding.executePendingBindings()
+
+            item?.let {
+                Picasso.get().load(it.uri)
+                    .fit()
+                    .centerCrop()
+                    .into(holder.binding.imageView)
+            }
         }
 
     }
@@ -118,6 +140,7 @@ class PhotoGalleryFragment : Fragment() {
 
     companion object{
         private const val REQ_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
+        private const val SPAN_COUNT = 3
     }
 
     private fun showRationaleDialog() {
