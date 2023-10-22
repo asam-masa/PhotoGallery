@@ -9,8 +9,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.DiffUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.example.myphoto.util.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 data class PhotoGalleryItem(val uri: Uri){
@@ -34,11 +36,15 @@ data class PhotoGalleryItem(val uri: Uri){
 }
 
 // MediaStoreAPIでContextが必要なためAndroidViewModelを継承する
+// (app:Application):AndroidViewModel(app)と記述する理由は↓
+// ttps://www.fuwamaki.com/article/329
 @HiltViewModel
-class PhotoGalleryViewModel(app:Application):AndroidViewModel(app){
+class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewModel(app){
     val photoList = MutableLiveData<List<PhotoGalleryItem>>()
     val isPermissionGranted = MutableLiveData<Boolean>().apply { value = false }
     val isPermissionDenied = MutableLiveData<Boolean>().apply { value = false }
+
+    val onSelect = MutableLiveData<Event<Uri>>()
 
     fun loadPhotoList(){
         viewModelScope.launch(Dispatchers.IO){
@@ -75,4 +81,8 @@ class PhotoGalleryViewModel(app:Application):AndroidViewModel(app){
     }
 
     fun getPhotoItem(index: Int) = photoList.value?.getOrNull(index)
+
+    fun onClick(item: PhotoGalleryItem){
+        onSelect.value = Event(item.uri)
+    }
 }
