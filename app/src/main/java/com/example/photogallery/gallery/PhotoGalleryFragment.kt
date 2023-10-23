@@ -139,6 +139,8 @@ class PhotoGalleryFragment : Fragment() {
     }
 
     companion object{
+        fun newInstance() = PhotoGalleryFragment()
+
         private const val REQ_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
         private const val SPAN_COUNT = 3
     }
