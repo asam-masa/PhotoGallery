@@ -18,6 +18,11 @@ class PhotoGalleryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_gallery)
+        if (savedInstanceState == null){
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container, PhotoGalleryFragment.newInstance())
+                .commitNow()
+        }
 
         viewModel.onSelect.observe(this,EventObserver{
             setResult(RESULT_OK, Intent().putExtra(INTENT_URI, it.toString()))
