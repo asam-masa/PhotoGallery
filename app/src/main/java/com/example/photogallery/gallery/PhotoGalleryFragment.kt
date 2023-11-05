@@ -116,6 +116,7 @@ class PhotoGalleryFragment : Fragment() {
 
             holder.binding.viewModel = viewModel
             holder.binding.item = item
+            // スクロール時のView再利用時に表示がおかしくなることがあるためViewにすぐ反映する
             holder.binding.executePendingBindings()
 
             item?.let {

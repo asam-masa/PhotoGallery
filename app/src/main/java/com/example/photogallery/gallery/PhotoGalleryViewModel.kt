@@ -1,9 +1,12 @@
 package com.example.photogallery.gallery
 
 import android.app.Application
+import android.content.ContentProvider
 import android.content.ContentUris
+import android.content.ContentValues
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -49,11 +52,16 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
     fun loadPhotoList(){
         viewModelScope.launch(Dispatchers.IO){
             val list = mutableListOf<PhotoGalleryItem>()
+            // フォルダ表示用
+            val folderList = arrayListOf<String>()
 
             // 読み込む列を指定する
             val projection = arrayOf(
                 MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DATE_ADDED
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media.BUCKET_ID,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME
             )
             // 行の絞り込み条件を指定する nullはすべての行を読み込む
             val selection = null
@@ -68,12 +76,33 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
             )?.use{cursor ->
                 // idが格納されている列番号を取得
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val filePathColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                val folderName = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                val folderIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
                 while (cursor.moveToNext()){
                     val id = cursor.getLong(idColumn)
                     val uri = ContentUris.withAppendedId(
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,id
                     )
-                    list.add(PhotoGalleryItem(uri))
+                    val folderId = cursor.getString(folderIdColumn)
+//                    val folderUri = ContentUris.withAppendedId(
+//                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, folderId
+//                    )
+                    val filePath = cursor.getString(filePathColumn)
+                    Log.v("filePath", filePath)
+
+                    val folderName = cursor.getString(folderName)
+                    Log.v("folderPath", folderName)
+
+                    // フォルダ表示しない場合はif文なし
+                    if (folderList.contains(folderId)){
+                        continue
+                    } else {
+                        list.add(PhotoGalleryItem(uri))
+//                      list.add(PhotoGalleryItem(folderUri))
+                        folderList.add(folderId)
+                    }
+
                 }
             }
             photoList.postValue(list)
