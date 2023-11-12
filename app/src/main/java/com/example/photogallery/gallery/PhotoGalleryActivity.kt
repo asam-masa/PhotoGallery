@@ -24,6 +24,7 @@ class PhotoGalleryActivity : AppCompatActivity() {
                 .commitNow()
         }
 
+        // タップされた画像のURIをセットする
         viewModel.onSelect.observe(this,EventObserver{
             setResult(RESULT_OK, Intent().putExtra(INTENT_URI, it.toString()))
             finish()

@@ -44,6 +44,7 @@ data class PhotoGalleryItem(val uri: Uri){
 @HiltViewModel
 class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewModel(app){
     val photoList = MutableLiveData<List<PhotoGalleryItem>>()
+    val photoFolderList = MutableLiveData<List<PhotoGalleryItem>>()
     val isPermissionGranted = MutableLiveData<Boolean>().apply { value = false }
     val isPermissionDenied = MutableLiveData<Boolean>().apply { value = false }
 
@@ -53,7 +54,8 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
         viewModelScope.launch(Dispatchers.IO){
             val list = mutableListOf<PhotoGalleryItem>()
             // フォルダ表示用
-            val folderList = arrayListOf<String>()
+//
+            val folderList = mutableListOf<PhotoGalleryItem>()
 
             // 読み込む列を指定する
             val projection = arrayOf(
@@ -77,39 +79,41 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
                 // idが格納されている列番号を取得
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
                 val filePathColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                val folderName = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-                val folderIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
+                val bucketName = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                val bucketIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
+                val folderListTemp = arrayListOf<String>()
                 while (cursor.moveToNext()){
                     val id = cursor.getLong(idColumn)
                     val uri = ContentUris.withAppendedId(
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,id
                     )
-                    val folderId = cursor.getString(folderIdColumn)
-//                    val folderUri = ContentUris.withAppendedId(
-//                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, folderId
-//                    )
+                    val bucketId = cursor.getString(bucketIdColumn)
                     val filePath = cursor.getString(filePathColumn)
                     Log.v("filePath", filePath)
 
-                    val folderName = cursor.getString(folderName)
+                    val folderName = cursor.getString(bucketName)
                     Log.v("folderPath", folderName)
 
+                    list.add(PhotoGalleryItem(uri))
                     // フォルダ表示しない場合はif文なし
-                    if (folderList.contains(folderId)){
+                    if (folderListTemp.contains(bucketId)){
                         continue
                     } else {
-                        list.add(PhotoGalleryItem(uri))
-//                      list.add(PhotoGalleryItem(folderUri))
-                        folderList.add(folderId)
+                        folderList.add(PhotoGalleryItem(uri))
+                        folderListTemp.add(bucketId)
                     }
-
                 }
             }
             photoList.postValue(list)
+            photoFolderList.postValue((folderList))
         }
     }
 
+    // 画像ファイル一覧取得
     fun getPhotoItem(index: Int) = photoList.value?.getOrNull(index)
+
+    // フォルダ一覧取得
+    fun getPhotoFolderItem(index: Int) = photoFolderList.value?.getOrNull(index)
 
     fun onClick(item: PhotoGalleryItem){
         onSelect.value = Event(item.uri)
