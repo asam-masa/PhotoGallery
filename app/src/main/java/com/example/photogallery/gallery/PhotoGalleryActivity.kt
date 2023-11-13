@@ -20,7 +20,7 @@ class PhotoGalleryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_photo_gallery)
         if (savedInstanceState == null){
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, PhotoGalleryFragment.newInstance())
+                .replace(R.id.container, PhotoGalleryFolderFragment.newInstance())
                 .commitNow()
         }
 

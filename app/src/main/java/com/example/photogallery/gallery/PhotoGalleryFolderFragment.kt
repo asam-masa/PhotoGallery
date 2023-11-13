@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photogallery.R
 import com.example.photogallery.databinding.FragmentPhotoGalleryBinding
+import com.example.photogallery.databinding.FragmentPhotoGalleryFolderBinding
 import com.example.photogallery.databinding.ViewPhotoGalleryImageBinding
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +37,7 @@ class PhotoGalleryFolderFragment : Fragment() {
     // https://developer.android.com/kotlin/ktx?hl=ja#fragment
     private val viewModel: PhotoGalleryViewModel by activityViewModels()
 
-    private var _binding:FragmentPhotoGalleryBinding? = null
+    private var _binding:FragmentPhotoGalleryFolderBinding? = null
     private val binding get() = _binding!!
 
     private val permissionRequest = registerForActivityResult(
@@ -75,7 +76,7 @@ class PhotoGalleryFolderFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_photo_gallery,container,false
+            inflater, R.layout.fragment_photo_gallery_folder,container,false
         )
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -112,7 +113,7 @@ class PhotoGalleryFolderFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-            val item = viewModel.getPhotoItem(position)
+            val item = viewModel.getPhotoFolderItem(position)
 
             holder.binding.viewModel = viewModel
             holder.binding.item = item
@@ -140,7 +141,7 @@ class PhotoGalleryFolderFragment : Fragment() {
     }
 
     companion object{
-        fun newInstance() = PhotoGalleryFragment()
+        fun newInstance() = PhotoGalleryFolderFragment()
 
         private const val REQ_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
         private const val SPAN_COUNT = 3
