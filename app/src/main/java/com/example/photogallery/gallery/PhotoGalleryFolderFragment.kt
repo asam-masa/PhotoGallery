@@ -19,6 +19,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,17 @@ class PhotoGalleryFolderFragment : Fragment() {
     // Avtivityと同じインスタンスを共有する場合はactivityViewModels()を使う
     // https://developer.android.com/kotlin/ktx?hl=ja#fragment
     private val viewModel: PhotoGalleryViewModel by activityViewModels()
+
+//    // NavHostを取得
+//    val navHostFragment =
+//        requireActivity().supportFragmentManager
+//            .findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+//
+//    // NavControllerを取得
+//    val navController = navHostFragment.navController
+
+//    val action =
+//        PhotoGalleryFolderFragmentDirections.actionPhotoGalleryFolderFragmentToPhotoGalleryFragment()
 
     private var _binding:FragmentPhotoGalleryFolderBinding? = null
     private val binding get() = _binding!!
