@@ -4,9 +4,11 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.PermissionChecker
@@ -26,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.photogallery.R
 import com.example.photogallery.databinding.FragmentPhotoGalleryBinding
 import com.example.photogallery.databinding.FragmentPhotoGalleryFolderBinding
+import com.example.photogallery.databinding.ViewPhotoGalleryFolderImageBinding
 import com.example.photogallery.databinding.ViewPhotoGalleryImageBinding
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,17 +40,6 @@ class PhotoGalleryFolderFragment : Fragment() {
     // Avtivityと同じインスタンスを共有する場合はactivityViewModels()を使う
     // https://developer.android.com/kotlin/ktx?hl=ja#fragment
     private val viewModel: PhotoGalleryViewModel by activityViewModels()
-
-//    // NavHostを取得
-//    val navHostFragment =
-//        requireActivity().supportFragmentManager
-//            .findFragmentById(R.id.fragmentContainerView) as NavHostFragment
-//
-//    // NavControllerを取得
-//    val navController = navHostFragment.navController
-
-//    val action =
-//        PhotoGalleryFolderFragmentDirections.actionPhotoGalleryFolderFragmentToPhotoGalleryFragment()
 
     private var _binding:FragmentPhotoGalleryFolderBinding? = null
     private val binding get() = _binding!!
@@ -113,13 +105,28 @@ class PhotoGalleryFolderFragment : Fragment() {
             layoutManager = GridLayoutManager(this@PhotoGalleryFolderFragment.context,SPAN_COUNT)
             adapter = imageAdapter
         }
+
+        // NavHostを取得
+        val navHostFragment =
+            requireActivity().supportFragmentManager
+                .findFragmentById(R.id.fragmentContainerView) as NavHostFragment
+
+        // NavControllerを取得
+        val navController = navHostFragment.navController
+
+//        view.findViewById<ImageView>(R.id.folderImageView).setOnClickListener{
+//            val action =
+//                PhotoGalleryFolderFragmentDirections
+//                    .actionPhotoGalleryFolderFragmentToPhotoGalleryFragment()
+//            navController.navigate(action)
+//        }
     }
 
     inner class ImageAdapter:ListAdapter<PhotoGalleryItem,ImageViewHolder>(PhotoGalleryItem.DIFF_UTIL) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            val binding = DataBindingUtil.inflate<ViewPhotoGalleryImageBinding>(
-                layoutInflater, R.layout.view_photo_gallery_image, parent, false
+            val binding = DataBindingUtil.inflate<ViewPhotoGalleryFolderImageBinding>(
+                layoutInflater, R.layout.view_photo_gallery_folder_image, parent, false
             )
             return ImageViewHolder(binding)
         }
@@ -133,16 +140,17 @@ class PhotoGalleryFolderFragment : Fragment() {
             holder.binding.executePendingBindings()
 
             item?.let {
+                Log.v("item.folder", item.folder.toString())
                 Picasso.get().load(it.uri)
                     .fit()
                     .centerCrop()
-                    .into(holder.binding.imageView)
+                    .into(holder.binding.folderImageView)
             }
         }
 
     }
 
-    inner class ImageViewHolder(val binding: ViewPhotoGalleryImageBinding)
+    inner class ImageViewHolder(val binding: ViewPhotoGalleryFolderImageBinding)
         :RecyclerView.ViewHolder(binding.root)
 
     override fun onResume() {
