@@ -18,11 +18,11 @@ class PhotoGalleryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_gallery)
-        if (savedInstanceState == null){
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, PhotoGalleryFolderFragment.newInstance())
-                .commitNow()
-        }
+//        if (savedInstanceState == null){
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.container, PhotoGalleryFolderFragment.newInstance())
+//                .commitNow()
+//        }
 
         // タップされた画像のURIをセットする
         viewModel.onSelect.observe(this,EventObserver{

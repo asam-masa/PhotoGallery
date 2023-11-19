@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-data class PhotoGalleryItem(val uri: Uri){
+data class PhotoGalleryItem(val uri: Uri, val folder: String){
     companion object{
         val DIFF_UTIL = object : DiffUtil.ItemCallback<PhotoGalleryItem>() {
             override fun areItemsTheSame(
@@ -35,6 +35,7 @@ data class PhotoGalleryItem(val uri: Uri){
                 return oldItem == newItem
             }
         }
+
     }
 }
 
@@ -94,12 +95,12 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
                     val folderName = cursor.getString(bucketName)
                     Log.v("folderPath", folderName)
 
-                    list.add(PhotoGalleryItem(uri))
+                    list.add(PhotoGalleryItem(uri,folderName))
                     // フォルダ表示しない場合はif文なし
                     if (folderListTemp.contains(bucketId)){
                         continue
                     } else {
-                        folderList.add(PhotoGalleryItem(uri))
+                        folderList.add(PhotoGalleryItem(uri,folderName))
                         folderListTemp.add(bucketId)
                     }
                 }
@@ -116,6 +117,8 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
     fun getPhotoFolderItem(index: Int) = photoFolderList.value?.getOrNull(index)
 
     fun onClick(item: PhotoGalleryItem){
+        Log.v("onClick_folder", item.folder.toString())
+        Log.v("onClick", item.uri.toString())
         onSelect.value = Event(item.uri)
     }
 }
