@@ -50,6 +50,7 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
     val isPermissionDenied = MutableLiveData<Boolean>().apply { value = false }
 
     val onSelect = MutableLiveData<Event<Uri>>()
+    val onSelectFolder = MutableLiveData<Event<String>>()
 
     fun loadPhotoList(){
         viewModelScope.launch(Dispatchers.IO){
@@ -120,5 +121,12 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
         Log.v("onClick_folder", item.folder.toString())
         Log.v("onClick", item.uri.toString())
         onSelect.value = Event(item.uri)
+    }
+
+    fun onClickFolder(item: PhotoGalleryItem){
+        Log.v("onClickFolder_folder", item.folder.toString())
+        Log.v("onClickFolder_folder2", item.folder)
+        Log.v("onClickFolder", item.uri.toString())
+        onSelectFolder.value = Event(item.folder)
     }
 }

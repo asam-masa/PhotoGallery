@@ -21,10 +21,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myphoto.util.EventObserver
 import com.example.photogallery.R
 import com.example.photogallery.databinding.FragmentPhotoGalleryBinding
 import com.example.photogallery.databinding.FragmentPhotoGalleryFolderBinding
@@ -114,12 +117,15 @@ class PhotoGalleryFolderFragment : Fragment() {
         // NavControllerを取得
         val navController = navHostFragment.navController
 
-//        view.findViewById<ImageView>(R.id.folderImageView).setOnClickListener{
-//            val action =
-//                PhotoGalleryFolderFragmentDirections
-//                    .actionPhotoGalleryFolderFragmentToPhotoGalleryFragment()
-//            navController.navigate(action)
-//        }
+        viewModel.onSelectFolder.observe(viewLifecycleOwner, EventObserver{
+//            findNavController().navigate(R.id.action_photoGalleryFolderFragment_to_photoGalleryFragment)
+            val item = viewModel.onSelectFolder.value
+            Log.v("onSelectFolder.value", it)
+            val action =
+                PhotoGalleryFolderFragmentDirections
+                    .actionPhotoGalleryFolderFragmentToPhotoGalleryFragment()
+            navController.navigate(action)
+        })
     }
 
     inner class ImageAdapter:ListAdapter<PhotoGalleryItem,ImageViewHolder>(PhotoGalleryItem.DIFF_UTIL) {
