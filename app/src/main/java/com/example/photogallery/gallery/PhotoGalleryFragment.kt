@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -113,6 +115,10 @@ class PhotoGalleryFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
             val item = viewModel.getPhotoItem(position)
+
+            // フォルダフラグメントからフォルダ名取得
+            val args:PhotoGalleryFragmentArgs by navArgs()
+            Log.v("args.folderName", args.folderName)
 
             holder.binding.viewModel = viewModel
             holder.binding.item = item

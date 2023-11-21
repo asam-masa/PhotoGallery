@@ -123,7 +123,7 @@ class PhotoGalleryFolderFragment : Fragment() {
             Log.v("onSelectFolder.value", it)
             val action =
                 PhotoGalleryFolderFragmentDirections
-                    .actionPhotoGalleryFolderFragmentToPhotoGalleryFragment()
+                    .actionPhotoGalleryFolderFragmentToPhotoGalleryFragment(folderName = it)
             navController.navigate(action)
         })
     }

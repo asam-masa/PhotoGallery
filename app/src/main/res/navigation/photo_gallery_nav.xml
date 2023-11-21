@@ -15,5 +15,9 @@
     <fragment
         android:id="@+id/photoGalleryFragment"
         android:name="com.example.photogallery.gallery.PhotoGalleryFragment"
-        android:label="PhotoGalleryFragment" />
+        android:label="PhotoGalleryFragment" >
+        <argument
+            android:name="folderName"
+            app:argType="string" />
+    </fragment>
 </navigation>
