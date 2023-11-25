@@ -100,7 +100,7 @@ class PhotoGalleryFolderFragment : Fragment() {
 
         val imageAdapter = ImageAdapter()
 
-        viewModel.photoList.observe(viewLifecycleOwner, Observer {
+        viewModel.photoFolderList.observe(viewLifecycleOwner, Observer {
             imageAdapter.submitList(it)
         })
         binding.recyclerView.apply {

@@ -52,7 +52,7 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
     val onSelect = MutableLiveData<Event<Uri>>()
     val onSelectFolder = MutableLiveData<Event<String>>()
 
-    fun loadPhotoList(){
+    fun loadPhotoList(folder_arg: String = "all"){
         viewModelScope.launch(Dispatchers.IO){
             val list = mutableListOf<PhotoGalleryItem>()
             // フォルダ表示用
@@ -91,12 +91,18 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
                     )
                     val bucketId = cursor.getString(bucketIdColumn)
                     val filePath = cursor.getString(filePathColumn)
-                    Log.v("filePath", filePath)
+                    Log.v("filePath_viewModel", filePath)
 
                     val folderName = cursor.getString(bucketName)
-                    Log.v("folderPath", folderName)
+                    Log.v("folderPath_viewModel", folderName)
 
-                    list.add(PhotoGalleryItem(uri,folderName))
+                    // タップされたフォルダ内のファイルだけリストに追加する
+                    if (folder_arg == "all"){
+                        list.add(PhotoGalleryItem(uri,folderName))
+                    }else if (folder_arg == folderName) {
+                        list.add(PhotoGalleryItem(uri, folderName))
+                    }
+
                     // フォルダ表示しない場合はif文なし
                     if (folderListTemp.contains(bucketId)){
                         continue
