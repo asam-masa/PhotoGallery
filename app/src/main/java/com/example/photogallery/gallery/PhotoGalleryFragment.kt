@@ -99,7 +99,7 @@ class PhotoGalleryFragment : Fragment() {
         })
         binding.recyclerView.apply {
             setHasFixedSize(true)
-            layoutManager = GridLayoutManager(this@PhotoGalleryFragment.context,SPAN_COUNT)
+            layoutManager = GridLayoutManager(this@PhotoGalleryFragment.context, SPAN_COUNT)
             adapter = imageAdapter
         }
     }
@@ -116,10 +116,33 @@ class PhotoGalleryFragment : Fragment() {
         override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
             val item = viewModel.getPhotoItem(position)
 
-            // フォルダフラグメントからフォルダ名取得
-            val args:PhotoGalleryFragmentArgs by navArgs()
-            Log.v("args.folderName", args.folderName)
+//            val item2 = viewModel.getPhotoItem(0)
+//            val args: PhotoGalleryFragmentArgs by navArgs()
+//            val itemLength = viewModel.photoList.value?.size
+//            Log.v("itemLength", itemLength.toString())
+//        viewModel.photoList.value?.forEach { item ->
+//            // フォルダフラグメントからフォルダ名取得
+//            Log.v("element", item.folder.toString())
+//            val args: PhotoGalleryFragmentArgs by navArgs()
+//
+//            if (item?.folder.toString() == args.folderName) {
+//                Log.v("item?.folder", item?.folder.toString())
+//                Log.v("args.folderName", args.folderName)
+//            }
+//        }
 
+//            if (item2?.folder.toString() == args.folderName) {
+//                Log.v("item?.folder", item2?.folder.toString())
+//                Log.v("args.folderName", args.folderName)
+//            }
+
+            // フォルダフラグメントからフォルダ名取得
+//            val args: PhotoGalleryFragmentArgs by navArgs()
+//            Log.v("item?.folder2", item?.folder.toString())
+//            Log.v("args.folderName2", args.folderName)
+//            if (item?.folder.toString() == args.folderName) {
+//
+//            }
             holder.binding.viewModel = viewModel
             holder.binding.item = item
             // スクロール時のView再利用時に表示がおかしくなることがあるためViewにすぐ反映する
@@ -130,9 +153,9 @@ class PhotoGalleryFragment : Fragment() {
                     .fit()
                     .centerCrop()
                     .into(holder.binding.imageView)
+
             }
         }
-
     }
 
     inner class ImageViewHolder(val binding: ViewPhotoGalleryImageBinding)
@@ -141,7 +164,9 @@ class PhotoGalleryFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (viewModel.isPermissionGranted.value == true){
-            viewModel.loadPhotoList()
+            val args: PhotoGalleryFragmentArgs by navArgs()
+            Log.v("onResume_args.folderName","args.folderName")
+            viewModel.loadPhotoList(args.folderName)
         }
     }
 
