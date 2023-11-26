@@ -17,7 +17,7 @@
         android:name="com.example.photogallery.gallery.PhotoGalleryFragment"
         android:label="PhotoGalleryFragment" >
         <argument
-            android:name="folderName"
+            android:name="bucketId"
             app:argType="string" />
     </fragment>
 </navigation>
