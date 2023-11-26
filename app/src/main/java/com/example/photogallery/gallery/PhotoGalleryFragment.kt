@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.fragment.app.Fragment
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.PermissionChecker
@@ -41,34 +43,8 @@ class PhotoGalleryFragment : Fragment() {
     private var _binding:FragmentPhotoGalleryBinding? = null
     private val binding get() = _binding!!
 
-    private val permissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ){granted ->
-        if (granted){
-            // 承認された
-            viewModel.isPermissionGranted.value = true
-        }else{
-            // 拒否された
-            if (shouldShowRequestPermissionRationale(REQ_PERMISSION)){
-                showRationaleDialog()
-            }else{
-                // 最終確認も拒否
-                viewModel.isPermissionDenied.value = true
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        context?.let{
-            val result = PermissionChecker.checkSelfPermission(it, REQ_PERMISSION)
-            if (result == PermissionChecker.PERMISSION_GRANTED){
-                viewModel.isPermissionGranted.value = true
-            }else{
-                permissionRequest.launch(REQ_PERMISSION)
-            }
-        }
     }
 
     override fun onCreateView(
@@ -116,33 +92,7 @@ class PhotoGalleryFragment : Fragment() {
         override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
             val item = viewModel.getPhotoItem(position)
 
-//            val item2 = viewModel.getPhotoItem(0)
-//            val args: PhotoGalleryFragmentArgs by navArgs()
-//            val itemLength = viewModel.photoList.value?.size
-//            Log.v("itemLength", itemLength.toString())
-//        viewModel.photoList.value?.forEach { item ->
-//            // フォルダフラグメントからフォルダ名取得
-//            Log.v("element", item.folder.toString())
-//            val args: PhotoGalleryFragmentArgs by navArgs()
-//
-//            if (item?.folder.toString() == args.folderName) {
-//                Log.v("item?.folder", item?.folder.toString())
-//                Log.v("args.folderName", args.folderName)
-//            }
-//        }
 
-//            if (item2?.folder.toString() == args.folderName) {
-//                Log.v("item?.folder", item2?.folder.toString())
-//                Log.v("args.folderName", args.folderName)
-//            }
-
-            // フォルダフラグメントからフォルダ名取得
-//            val args: PhotoGalleryFragmentArgs by navArgs()
-//            Log.v("item?.folder2", item?.folder.toString())
-//            Log.v("args.folderName2", args.folderName)
-//            if (item?.folder.toString() == args.folderName) {
-//
-//            }
             holder.binding.viewModel = viewModel
             holder.binding.item = item
             // スクロール時のView再利用時に表示がおかしくなることがあるためViewにすぐ反映する
@@ -166,7 +116,7 @@ class PhotoGalleryFragment : Fragment() {
         if (viewModel.isPermissionGranted.value == true){
             val args: PhotoGalleryFragmentArgs by navArgs()
             Log.v("onResume_args.folderName","args.folderName")
-            viewModel.loadPhotoList(args.folderName)
+            viewModel.loadPhotoList(args.bucketId)
         }
     }
 
@@ -175,46 +125,5 @@ class PhotoGalleryFragment : Fragment() {
 
         private const val REQ_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
         private const val SPAN_COUNT = 3
-    }
-
-    private fun showRationaleDialog() {
-        RationalDialog().show(childFragmentManager,viewLifecycleOwner){
-            if (it == RationalDialog.RESULT_OK){
-                permissionRequest.launch(REQ_PERMISSION)
-            }else{
-                viewModel.isPermissionDenied.value = true
-            }
-        }
-    }
-
-    class RationalDialog:DialogFragment() {
-        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-            return activity?.let {
-                AlertDialog.Builder(it)
-                    .setMessage("デバイス内の写真を表示するにはアクセスを許可してください。")
-                    .setPositiveButton("OK"){_, _ ->
-                        setFragmentResult(REQUEST_KEY, bundleOf(Pair(RESULT_KEY, RESULT_OK)))
-                    }
-                    .setNegativeButton("Cancel"){_, _ ->
-                        setFragmentResult(REQUEST_KEY, bundleOf(Pair(RESULT_KEY, RESULT_CANCEL)))
-                    }
-                    .create()
-            }?:throw IllegalStateException("Activity cannot be null")
-        }
-        fun show(manager: FragmentManager, lifecycleOwner: LifecycleOwner,callback:(Int) -> Unit){
-            val listener = FragmentResultListener{_,result ->
-                val resultValue = result.getInt(RESULT_KEY)
-                callback(resultValue)
-            }
-            manager.setFragmentResultListener(RESULT_KEY, lifecycleOwner,listener)
-            show(manager, TAG)
-        }
-        companion object{
-            private const val TAG = "TAG_RATIONALE_DIALOG"
-            private const val REQUEST_KEY = "RATIONALE_DIALOG_REQUEST_KEY"
-            private const val RESULT_KEY = "RATIONALE_DIALOG_RESULT_KEY"
-            const val RESULT_OK = 1
-            const val RESULT_CANCEL = -1
-        }
     }
 }

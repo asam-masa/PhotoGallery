@@ -52,11 +52,66 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
     val onSelect = MutableLiveData<Event<Uri>>()
     val onSelectFolder = MutableLiveData<Event<String>>()
 
-    fun loadPhotoList(folder_arg: String = "all"){
+    // 指定されたバッケトID内の画像ファイルを取得
+    // folderArg: バケットIDを指定
+    fun loadPhotoList(folderArg: String = "all"){
         viewModelScope.launch(Dispatchers.IO){
             val list = mutableListOf<PhotoGalleryItem>()
             // フォルダ表示用
 //
+            // 読み込む列を指定する
+            val projection = arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media.BUCKET_ID,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+            )
+            // 行の絞り込み条件を指定する nullはすべての行を読み込む
+            val selection = null
+            // 絞り込み条件の引数
+            val selectionArgs = null
+            // 並び順 nullは指定なし
+            val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+
+            getApplication<Application>().contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,selection, selectionArgs, sortOrder
+            )?.use{cursor ->
+                // idが格納されている列番号を取得
+                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val filePathColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                val bucketName = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                val bucketIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
+                val folderListTemp = arrayListOf<String>()
+                while (cursor.moveToNext()){
+                    val id = cursor.getLong(idColumn)
+                    val uri = ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,id
+                    )
+                    val bucketId = cursor.getString(bucketIdColumn)
+                    val filePath = cursor.getString(filePathColumn)
+                    Log.v("filePath_viewModel", filePath)
+
+                    val folderName = cursor.getString(bucketName)
+                    Log.v("folderPath_viewModel", folderName)
+
+                    // タップされたフォルダ内のファイルだけリストに追加する
+                    if (folderArg == "all"){
+                        list.add(PhotoGalleryItem(uri,bucketId))
+                    }else if (folderArg == bucketId) {
+                        list.add(PhotoGalleryItem(uri, bucketId))
+                    }
+                }
+            }
+            photoList.postValue(list)
+        }
+    }
+
+    // 画像ファイルがあるフォルダを取得
+    fun loadPhotoFolderList(){
+        viewModelScope.launch(Dispatchers.IO){
+            // フォルダ表示用
             val folderList = mutableListOf<PhotoGalleryItem>()
 
             // 読み込む列を指定する
@@ -96,23 +151,15 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
                     val folderName = cursor.getString(bucketName)
                     Log.v("folderPath_viewModel", folderName)
 
-                    // タップされたフォルダ内のファイルだけリストに追加する
-                    if (folder_arg == "all"){
-                        list.add(PhotoGalleryItem(uri,folderName))
-                    }else if (folder_arg == folderName) {
-                        list.add(PhotoGalleryItem(uri, folderName))
-                    }
-
                     // フォルダ表示しない場合はif文なし
                     if (folderListTemp.contains(bucketId)){
                         continue
                     } else {
-                        folderList.add(PhotoGalleryItem(uri,folderName))
+                        folderList.add(PhotoGalleryItem(uri,bucketId))
                         folderListTemp.add(bucketId)
                     }
                 }
             }
-            photoList.postValue(list)
             photoFolderList.postValue((folderList))
         }
     }

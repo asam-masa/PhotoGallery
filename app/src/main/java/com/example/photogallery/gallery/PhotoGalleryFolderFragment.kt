@@ -123,7 +123,7 @@ class PhotoGalleryFolderFragment : Fragment() {
             Log.v("onSelectFolder.value", it)
             val action =
                 PhotoGalleryFolderFragmentDirections
-                    .actionPhotoGalleryFolderFragmentToPhotoGalleryFragment(folderName = it)
+                    .actionPhotoGalleryFolderFragmentToPhotoGalleryFragment(bucketId = it)
             navController.navigate(action)
         })
     }
@@ -162,7 +162,7 @@ class PhotoGalleryFolderFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (viewModel.isPermissionGranted.value == true){
-            viewModel.loadPhotoList()
+            viewModel.loadPhotoFolderList()
         }
     }
 
