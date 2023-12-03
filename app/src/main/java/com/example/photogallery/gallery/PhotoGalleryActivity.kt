@@ -24,12 +24,6 @@ class PhotoGalleryActivity : AppCompatActivity() {
 //                .replace(R.id.container, PhotoGalleryFolderFragment.newInstance())
 //                .commitNow()
 //        }
-
-        // タップされた画像のURIをセットする
-//        viewModel.onSelect.observe(this,EventObserver{
-//            setResult(RESULT_OK, Intent().putExtra(INTENT_URI, it.toString()))
-//            finish()
-//        })
     }
 
     class ResultContract:ActivityResultContract<Unit, Uri?>(){
