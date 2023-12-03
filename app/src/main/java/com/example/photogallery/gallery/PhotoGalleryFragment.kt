@@ -3,6 +3,7 @@ package com.example.photogallery.gallery
 import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.activity.addCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.fragment.app.Fragment
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.PermissionChecker
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
@@ -22,10 +24,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myphoto.util.EventObserver
 import com.example.photogallery.R
 import com.example.photogallery.databinding.FragmentPhotoGalleryBinding
 import com.example.photogallery.databinding.ViewPhotoGalleryImageBinding
@@ -78,6 +83,17 @@ class PhotoGalleryFragment : Fragment() {
             layoutManager = GridLayoutManager(this@PhotoGalleryFragment.context, SPAN_COUNT)
             adapter = imageAdapter
         }
+
+        // NavControllerを取得
+        val navController = view.findNavController()
+
+        // onSelectイベントを監視
+        viewModel.onSelect.observe(viewLifecycleOwner, EventObserver{
+            val action =
+                PhotoGalleryFragmentDirections
+                    .actionPhotoGalleryFragmentToPhotoGalleryImageFragment(it.toString())
+            navController.navigate(action)
+        })
     }
 
     inner class ImageAdapter:ListAdapter<PhotoGalleryItem,ImageViewHolder>(PhotoGalleryItem.DIFF_UTIL) {
