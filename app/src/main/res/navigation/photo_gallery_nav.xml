@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/photo_gallery_nav"
     app:startDestination="@id/photoGalleryFolderFragment">
 
@@ -18,6 +19,18 @@
         android:label="PhotoGalleryFragment" >
         <argument
             android:name="bucketId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_photoGalleryFragment_to_photoGalleryImageFragment"
+            app:destination="@id/photoGalleryImageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoGalleryImageFragment"
+        android:name="com.example.photogallery.gallery.PhotoGalleryImageFragment"
+        android:label="fragment_photo_gallery_image"
+        tools:layout="@layout/fragment_photo_gallery_image" >
+        <argument
+            android:name="photo_URI"
             app:argType="string" />
     </fragment>
 </navigation>
