@@ -118,9 +118,6 @@ class PhotoGalleryFolderFragment : Fragment() {
         val navController = navHostFragment.navController
 
         viewModel.onSelectFolder.observe(viewLifecycleOwner, EventObserver{
-//            findNavController().navigate(R.id.action_photoGalleryFolderFragment_to_photoGalleryFragment)
-            val item = viewModel.onSelectFolder.value
-            Log.v("onSelectFolder.value", it)
             val action =
                 PhotoGalleryFolderFragmentDirections
                     .actionPhotoGalleryFolderFragmentToPhotoGalleryFragment(bucketId = it)
@@ -146,14 +143,12 @@ class PhotoGalleryFolderFragment : Fragment() {
             holder.binding.executePendingBindings()
 
             item?.let {
-                Log.v("item.folder", item.folder.toString())
                 Picasso.get().load(it.uri)
                     .fit()
                     .centerCrop()
                     .into(holder.binding.folderImageView)
             }
         }
-
     }
 
     inner class ImageViewHolder(val binding: ViewPhotoGalleryFolderImageBinding)

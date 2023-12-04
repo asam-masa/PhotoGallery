@@ -33,7 +33,6 @@ class PhotoGalleryImageFragment : Fragment() {
             inflater,container,false
         )
         return binding.root
-    //        return inflater.inflate(R.layout.fragment_photo_gallery_image, container, false)
     }
 
     override fun onDestroy() {
@@ -43,7 +42,6 @@ class PhotoGalleryImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args: PhotoGalleryImageFragmentArgs by navArgs()
-        Log.v("imageViewPhotoGalleryImage","imageViewPhotoGalleryImage")
         binding.imageViewPhotoGalleryImage.setImageURI(Uri.parse(args.photoURI))
     }
 
