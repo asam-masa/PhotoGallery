@@ -35,7 +35,6 @@ data class PhotoGalleryItem(val uri: Uri, val folder: String){
                 return oldItem == newItem
             }
         }
-
     }
 }
 
@@ -80,21 +79,13 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
             )?.use{cursor ->
                 // idが格納されている列番号を取得
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val filePathColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                val bucketName = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
                 val bucketIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
-                val folderListTemp = arrayListOf<String>()
                 while (cursor.moveToNext()){
                     val id = cursor.getLong(idColumn)
                     val uri = ContentUris.withAppendedId(
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,id
                     )
                     val bucketId = cursor.getString(bucketIdColumn)
-                    val filePath = cursor.getString(filePathColumn)
-                    Log.v("filePath_viewModel", filePath)
-
-                    val folderName = cursor.getString(bucketName)
-                    Log.v("folderPath_viewModel", folderName)
 
                     // タップされたフォルダ内のファイルだけリストに追加する
                     if (folderArg == "all"){
@@ -135,8 +126,6 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
             )?.use{cursor ->
                 // idが格納されている列番号を取得
                 val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val filePathColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                val bucketName = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
                 val bucketIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
                 val folderListTemp = arrayListOf<String>()
                 while (cursor.moveToNext()){
@@ -145,11 +134,6 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,id
                     )
                     val bucketId = cursor.getString(bucketIdColumn)
-                    val filePath = cursor.getString(filePathColumn)
-                    Log.v("filePath_viewModel", filePath)
-
-                    val folderName = cursor.getString(bucketName)
-                    Log.v("folderPath_viewModel", folderName)
 
                     // フォルダ表示しない場合はif文なし
                     if (folderListTemp.contains(bucketId)){
@@ -171,15 +155,10 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
     fun getPhotoFolderItem(index: Int) = photoFolderList.value?.getOrNull(index)
 
     fun onClick(item: PhotoGalleryItem){
-        Log.v("onClick_folder", item.folder.toString())
-        Log.v("onClick", item.uri.toString())
         onSelect.value = Event(item.uri)
     }
 
     fun onClickFolder(item: PhotoGalleryItem){
-        Log.v("onClickFolder_folder", item.folder.toString())
-        Log.v("onClickFolder_folder2", item.folder)
-        Log.v("onClickFolder", item.uri.toString())
         onSelectFolder.value = Event(item.folder)
     }
 }

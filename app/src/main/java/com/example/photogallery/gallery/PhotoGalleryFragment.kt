@@ -108,7 +108,6 @@ class PhotoGalleryFragment : Fragment() {
         override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
             val item = viewModel.getPhotoItem(position)
 
-
             holder.binding.viewModel = viewModel
             holder.binding.item = item
             // スクロール時のView再利用時に表示がおかしくなることがあるためViewにすぐ反映する
@@ -119,7 +118,6 @@ class PhotoGalleryFragment : Fragment() {
                     .fit()
                     .centerCrop()
                     .into(holder.binding.imageView)
-
             }
         }
     }
@@ -129,17 +127,13 @@ class PhotoGalleryFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.isPermissionGranted.value == true){
-            val args: PhotoGalleryFragmentArgs by navArgs()
-            Log.v("onResume_args.folderName","args.folderName")
-            viewModel.loadPhotoList(args.bucketId)
-        }
+        val args: PhotoGalleryFragmentArgs by navArgs()
+        viewModel.loadPhotoList(args.bucketId)
     }
 
     companion object{
         fun newInstance() = PhotoGalleryFragment()
 
-        private const val REQ_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
         private const val SPAN_COUNT = 3
     }
 }
