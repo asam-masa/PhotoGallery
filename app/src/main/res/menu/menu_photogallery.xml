@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/rotate_item"
+        android:title="Rotate"
+        android:icon="@drawable/baseline_rotate_left_24"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/setting_item"
+        android:title="Settings"
+        app:showAsAction="never"/>
+
+</menu>
