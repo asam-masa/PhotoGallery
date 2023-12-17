@@ -24,22 +24,23 @@ class PhotoGalleryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_photo_gallery)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.menu_photogallery, menu)
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        val inflater: MenuInflater = menuInflater
+//        inflater.inflate(R.menu.menu_photogallery, menu)
+//        return true
+//    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 //        return  when(item.itemId){
-////            R.id.rotate_item -> {
-////
-////            }
+//            R.id.rotate_item -> {
+//
+//                true
+//            }
 //            else -> super.onOptionsItemSelected(item)
 //        }
-        Log.v("rotate_item", "rotate_item")
-        return super.onOptionsItemSelected(item)
-    }
+//        Log.v("rotate_item_activity", "Activity")
+//        return super.onOptionsItemSelected(item)
+//    }
 
     class ResultContract:ActivityResultContract<Unit, Uri?>(){
         override fun createIntent(context: Context, input: Unit) =
