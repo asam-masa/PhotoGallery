@@ -100,7 +100,7 @@ class PhotoGalleryFolderFragment : Fragment() {
 
         val imageAdapter = ImageAdapter()
 
-        viewModel.photoFolderList.observe(viewLifecycleOwner, Observer {
+        viewModel.photoList.observe(viewLifecycleOwner, Observer {
             imageAdapter.submitList(it)
         })
         binding.recyclerView.apply {
@@ -135,7 +135,7 @@ class PhotoGalleryFolderFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-            val item = viewModel.getPhotoFolderItem(position)
+            val item = viewModel.getPhotoItem(position)
 
             holder.binding.viewModel = viewModel
             holder.binding.item = item
@@ -157,7 +157,7 @@ class PhotoGalleryFolderFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (viewModel.isPermissionGranted.value == true){
-            viewModel.loadPhotoFolderList()
+            viewModel.loadPhotoList(true)
         }
     }
 
