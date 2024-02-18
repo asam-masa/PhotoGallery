@@ -128,7 +128,7 @@ class PhotoGalleryFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         val args: PhotoGalleryFragmentArgs by navArgs()
-        viewModel.loadPhotoList(args.bucketId)
+        viewModel.loadPhotoList(false,args.bucketId)
     }
 
     companion object{
