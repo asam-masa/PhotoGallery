@@ -44,7 +44,6 @@ data class PhotoGalleryItem(val uri: Uri, val folder: String){
 @HiltViewModel
 class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewModel(app){
     val photoList = MutableLiveData<List<PhotoGalleryItem>>()
-    val photoFolderList = MutableLiveData<List<PhotoGalleryItem>>()
     val isPermissionGranted = MutableLiveData<Boolean>().apply { value = false }
     val isPermissionDenied = MutableLiveData<Boolean>().apply { value = false }
 
@@ -54,8 +53,8 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
     /**
      * 指定されたバッケトID内の画像ファイルを取得
      *
-     * @args folderListArg：フォルダ一覧：true ファイル一覧：false
-     * @args folderArg：取得するファルダ名を指定、未指定なら全てのフォルダ
+     * @args [folderListArg]：フォルダ一覧：true ファイル一覧：false
+     * @args [folderArg]：取得するファルダ名を指定、未指定なら全てのフォルダ
      */
     fun loadPhotoList(folderListArg: Boolean, folderArg: String = "all"){
         viewModelScope.launch(Dispatchers.IO){
@@ -121,7 +120,11 @@ class PhotoGalleryViewModel @Inject constructor(app:Application):AndroidViewMode
     }
 
 
-    // 画像ファイルまたはフォルダ一覧取得
+    /**
+     * 画像ファイルまたはフォルダ一覧を取得する
+     *
+     * @param [index]：取得するデータの位置を指定する
+     */
     fun getPhotoItem(index: Int) = photoList.value?.getOrNull(index)
 
     fun onClick(item: PhotoGalleryItem){
