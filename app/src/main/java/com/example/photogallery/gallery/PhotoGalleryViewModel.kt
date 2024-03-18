@@ -1,9 +1,7 @@
 package com.example.photogallery.gallery
 
 import android.app.Application
-import android.content.ContentProvider
 import android.content.ContentUris
-import android.content.ContentValues
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
